@@ -1,5 +1,6 @@
 const db = require("../models");
 const Users = db.users;
+const Posts = db.posts;
 const { Sequelize, Op, QueryTypes } = require("sequelize");
 
 const adduser = async (req, res) => {
@@ -183,7 +184,6 @@ const rawQueryOperations = async (req, res) => {
       // replacements: ["male"], //gender = ?
       // replacements:{gender:['male','female']} //IN(:gender)
       //  replacements:{email:'%gmail.com'} //LIKE :email
-
     }
   );
 
@@ -193,6 +193,59 @@ const rawQueryOperations = async (req, res) => {
   res.status(200).json(response);
 };
 
+// SELECT "users"."id",
+//        "users"."name",
+//        "users"."email",
+//        "users"."gender",
+//        "users"."createdat",
+//        "users"."updatedat",
+//        "post"."id"          AS "post.id",
+//        "post"."name"        AS "post.name",
+//        "post"."title"       AS "post.title",
+//        "post"."content"     AS "post.content",
+//        "post"."user_id"     AS "post.user_id",
+//        "post"."created_at"  AS "post.created_at",
+//        "post"."modified_at" AS "post.modified_at"
+// FROM   "users" AS "users"
+//        LEFT OUTER JOIN "posts" AS "post"
+//                     ON "users"."id" = "post"."user_id"
+// WHERE  "users"."id" = 1;
+const OneToOneOperations = async (req, res) => {
+  try {
+    let data = await Users.findAll({
+      attributes: ["name", "email"],
+      include: [
+        {
+          model: Posts,
+          as: "postDetail",
+          attributes: [["name", "postName"], "title", "content"],
+        },
+      ],
+      where: { id: 1 },
+    });
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const postBelongsToUser = async (req, res) => {
+  try {
+    let data = await Posts.findAll({
+      attributes: ["name", "title", "content"],
+      include: [
+        {
+          model: Users,
+          attributes: ["name", "email"],
+        },
+      ],
+    });
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   adduser,
   crudOperations,
@@ -200,4 +253,6 @@ module.exports = {
   finderOperations,
   validationOperations,
   rawQueryOperations,
+  OneToOneOperations,
+  postBelongsToUser,
 };

@@ -25,10 +25,15 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.users = require("./users")(sequelize, DataTypes);
-db.posts = require('./posts')(sequelize, DataTypes);
+db.posts = require("./posts")(sequelize, DataTypes);
 
 db.sequelize.sync({ force: false }).then(() => {
   console.log("Database & tables created!");
 });
+
+// aage se ja rahe hai
+db.users.hasOne(db.posts, { foreignKey: "user_id" ,as :'postDetail' }); // define a userId
+db.posts.belongsTo(db.users, { foreignKey: "user_id" });
+// post kise se Belong karta hai user ke
 
 module.exports = db;
