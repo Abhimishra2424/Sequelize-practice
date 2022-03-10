@@ -210,6 +210,21 @@ const rawQueryOperations = async (req, res) => {
 //        LEFT OUTER JOIN "posts" AS "post"
 //                     ON "users"."id" = "post"."user_id"
 // WHERE  "users"."id" = 1;
+
+const createPost = async (req, res) => {
+  try {
+    let data = await Posts.create({
+      name: "post3",
+      title: "post3",
+      content: "post3",
+      user_id: 2,
+    });
+    res.send(data);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+};
+
 const OneToOneOperations = async (req, res) => {
   try {
     let data = await Users.findAll({
@@ -246,6 +261,24 @@ const postBelongsToUser = async (req, res) => {
   }
 };
 
+const OneToManyOperations = async (req, res) => {
+  try {
+    let data = await Users.findAll({
+      attributes: ["name", "email"],
+      include: [
+        {
+          model: Posts,
+          as:'posts',
+          attributes: [["name", "postName"], "title", "content"],
+        },
+      ],
+    });
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   adduser,
   crudOperations,
@@ -255,4 +288,6 @@ module.exports = {
   rawQueryOperations,
   OneToOneOperations,
   postBelongsToUser,
+  OneToManyOperations,
+  createPost,
 };

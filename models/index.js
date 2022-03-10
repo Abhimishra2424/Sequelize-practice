@@ -31,9 +31,13 @@ db.sequelize.sync({ force: false }).then(() => {
   console.log("Database & tables created!");
 });
 
-// aage se ja rahe hai
-db.users.hasOne(db.posts, { foreignKey: "user_id" ,as :'postDetail' }); // define a userId
-db.posts.belongsTo(db.users, { foreignKey: "user_id" });
+// aage se ja rahe hai 
+// db.users.hasOne(db.posts, { foreignKey: "user_id", as: "postDetail" }); // define a userId
+// db.posts.belongsTo(db.users, { foreignKey: "user_id", as: "userInfo" });
 // post kise se Belong karta hai user ke
+
+// One to Many ? ek user ka multiple post ho sakta hai
+db.users.hasMany(db.posts, { foreignKey: "user_id", as: "posts" });
+db.posts.belongsTo(db.users, { foreignKey: "user_id", as: "users" });
 
 module.exports = db;

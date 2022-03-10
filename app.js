@@ -21,6 +21,8 @@ app.get("/validation", userController.validationOperations)
 app.get("/raw-query", userController.rawQueryOperations)
 app.get("/OneToOne", userController.OneToOneOperations)
 app.get("/postBelongsToUser", userController.postBelongsToUser)
+app.get("/OneToMany", userController.OneToManyOperations)
+app.get("/addPost", userController.createPost)
 
 
 
