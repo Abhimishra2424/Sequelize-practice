@@ -27,17 +27,23 @@ db.sequelize = sequelize;
 db.users = require("./users")(sequelize, DataTypes);
 db.posts = require("./posts")(sequelize, DataTypes);
 
+db.tags = require("./tags")(sequelize, DataTypes);
+db.post_tag = require("./post_tag")(sequelize, DataTypes);
+
 db.sequelize.sync({ force: false }).then(() => {
   console.log("Database & tables created!");
 });
 
-// aage se ja rahe hai 
+// --------one to one relationship
 // db.users.hasOne(db.posts, { foreignKey: "user_id", as: "postDetail" }); // define a userId
 // db.posts.belongsTo(db.users, { foreignKey: "user_id", as: "userInfo" });
-// post kise se Belong karta hai user ke
 
-// One to Many ? ek user ka multiple post ho sakta hai
-db.users.hasMany(db.posts, { foreignKey: "user_id", as: "posts" });
-db.posts.belongsTo(db.users, { foreignKey: "user_id", as: "users" });
+//---------- One to Many ? ek user ka multiple post ho sakta hai
+// db.users.hasMany(db.posts, { foreignKey: "user_id", as: "posts" });
+// db.posts.belongsTo(db.users, { foreignKey: "user_id", as: "users" });
+
+// ---------- Many to Many
+db.posts.belongsToMany(db.tags, { through: "post_tag" });
+db.tags.belongsToMany(db.posts, { through: "post_tag" }); 
 
 module.exports = db;

@@ -1,6 +1,9 @@
 const db = require("../models");
 const Users = db.users;
 const Posts = db.posts;
+const Tags = db.tags;
+const Post_tag = db.post_tag;
+
 const { Sequelize, Op, QueryTypes } = require("sequelize");
 
 const adduser = async (req, res) => {
@@ -65,12 +68,12 @@ const crudOperations = async (req, res) => {
 };
 
 const queryOperations = async (req, res) => {
-  //   let data = await Users.create(
-  //     { name: "ram", email: "test2@gamil.com" },
-  //     {
-  //       fields: ["email" , "name"],
-  //     }
-  //   );
+  let data = await Users.create(
+    { name: "vik", email: "vik@gamil.com" },
+    {
+      fields: ["email", "name"],
+    }
+  );
   //   select sara data nikal lena
   //   let data = await Users.findAll({
   //     attributes: [
@@ -111,7 +114,7 @@ const queryOperations = async (req, res) => {
   //   });
 
   // Total Count
-  let data = await Users.findAndCountAll({});
+  // let data = await Users.findAndCountAll({});
   res.send(data);
 };
 
@@ -214,11 +217,25 @@ const rawQueryOperations = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     let data = await Posts.create({
-      name: "post3",
-      title: "post3",
-      content: "post3",
-      user_id: 2,
+      name: "news abhi",
+      title: "abhi final",
+      content: "abhi detail",
+      user_id: 1,
     });
+    res.send(data);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+};
+
+const createTags = async (req, res) => {
+  try {
+    let data = await Tags.create({
+      name: "sports",
+    });
+    //     let data = await Tags.destroy({
+    //    truncate: true,
+    // });
     res.send(data);
   } catch (e) {
     res.status(500).send(e);
@@ -268,7 +285,7 @@ const OneToManyOperations = async (req, res) => {
       include: [
         {
           model: Posts,
-          as:'posts',
+          as: "posts",
           attributes: [["name", "postName"], "title", "content"],
         },
       ],
@@ -276,6 +293,47 @@ const OneToManyOperations = async (req, res) => {
     res.json(data);
   } catch (error) {
     console.log(error);
+  }
+};
+
+const manyToManyOperations = async (req, res) => {
+  // Post to Tags ==========>
+  try {
+    // let data = await Posts.findAll({
+    //   attributes: ["title", "content"],
+    //   include: [
+    //     {
+    //       model: Tags,
+    //       attributes: ["name"],
+    //     },
+    //   ],
+    // });
+
+    // Tag to Post ============>
+    let data = await Tags.findAll({
+      attributes: ["name"],
+      include: [
+        {
+          model: Posts,
+          attributes: ["title"],
+        },
+      ],
+    });
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const createPost_tag = async (req, res) => {
+  try {
+    let data = await Post_tag.create({
+      postId: "4",
+      tagId: "2",
+    });
+    res.send(data);
+  } catch (e) {
+    res.status(500).send(e);
   }
 };
 
@@ -290,4 +348,7 @@ module.exports = {
   postBelongsToUser,
   OneToManyOperations,
   createPost,
+  createTags,
+  createPost_tag,
+  manyToManyOperations,
 };
